@@ -1,0 +1,23 @@
+{
+  "name": "bride_the_gap",
+  "version": "1.0.0",
+  "description": "Bridge the Gap Platform ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ManidharVutla/Bride_The_Gap.git"
+  },
+  "keywords": [
+    "ENPM",
+    "613"
+  ],
+  "author": "Team Turing",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ManidharVutla/Bride_The_Gap/issues"
+  },
+  "homepage": "https://github.com/ManidharVutla/Bride_The_Gap#readme"
+}
