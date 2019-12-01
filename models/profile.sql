@@ -1,0 +1,1 @@
+create table student_profile (university varchar(50), website varchar(200), skills varchar(200), bio varchar(500), git varchar(200));
