@@ -8,56 +8,106 @@ const { check, validationResult } = require("express-validator/check");
 //@desc GET Current users profile
 //@access Private
 
-router.get("/", auth, async (req, res) => {
+router.get("/me", auth, async (req, res) => {
   try {
-    conn.query(
-      "select first_name, last_name, avatar, address from the user where email=?",
-      req.email
-    );
+    const email = req.user.id;
+    const type = req.user.type;
+    var table = student_profile;
+    if (type == 1) table = employer_profile;
+    conn.query("SELECT * from ? where email=?", [table, email], function(
+      err,
+      results,
+      fields
+    ) {
+      conn.query(
+        "SELECT first_name, last_name, avatar, phone, address from user where email=?",
+        req.user.id,
+        function(err, r, fields) {
+          res.json(Object.assign({}, results[0], r[0]));
+        }
+      );
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server Error");
   }
 });
 
-router.post(
-  "/",
-  [
-    auth,
-    [
-      check("university", "University is Required")
-        .not()
-        .isEmpty(),
-      check("skills", "Skills is required")
-        .not()
-        .isEmpty()
-    ]
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { university, website, bio, skills, git } = req.body;
-
-    //Build profile object
-    const profileFields = {};
-    profileFields.user = req.email;
-
-    if (university) profileFields.university = university;
-    if (website) profileFields.website = website;
-    if (bio) profileFields.bio = bio;
-    if (git) profileFields.git = git;
-    if (skills) {
-      profileFields.skills = skills.split(",").map(skill => skill.trim());
-    }
-
-    console.log(skills);
-
-    res.send("Hello");
+router.post("/", auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-);
+
+  //Student Profile
+  if (req.user.type == 0) {
+    const { university, website, bio, skills, git } = req.body;
+    //Check if profile exists
+    try {
+      conn.query(
+        "SELECT * from student_profile where email=?",
+        req.user.id,
+        async function(err, results, fields) {
+          if (err) throw err;
+          if (results.length >= 1) {
+            conn.query(
+              "UPDATE student_profile SET university=?, website=?,bio=?,skills=?,git=? where email = ?",
+              [university, website, bio, skills, git, req.user.id],
+              function(err, results, fields) {
+                if (err) throw err;
+              }
+            );
+            //Else Create Profile
+          } else {
+            conn.query(
+              "INSERT INTO student_profile VALUES(?,?,?,?,?,?)",
+              [university, website, bio, skills, git, req.user.id],
+              function(err, results, fields) {
+                if (err) throw err;
+              }
+            );
+          }
+          return res.json({ university, website, bio, skills, git });
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+    //Employer Profile
+  } else {
+    const { company, website, bio, skills_looking } = req.body;
+    //Check if profile exists
+    try {
+      conn.query(
+        "SELECT * from employer_profile where email=?",
+        req.user.id,
+        async function(err, results, fields) {
+          if (err) throw err;
+          if (results.length >= 1) {
+            conn.query(
+              "UPDATE employer_profile SET company=?, website=?,bio=?,skills_looking=? where email = ?",
+              [company, website, bio, skills_looking, req.user.id],
+              function(err, results, fields) {
+                if (err) throw err;
+              }
+            );
+            //Else Create Profile
+          } else {
+            conn.query(
+              "INSERT INTO employer_profile VALUES(?,?,?,?,?)",
+              [company, website, bio, skills_looking, req.user.id],
+              function(err, results, fields) {
+                if (err) throw err;
+              }
+            );
+          }
+          return res.json({ company, website, bio, skills_looking });
+        }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  }
+});
 
 module.exports = router;

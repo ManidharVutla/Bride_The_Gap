@@ -1,1 +1,2 @@
-create table student_profile (university varchar(50), website varchar(200), skills varchar(200), bio varchar(500), git varchar(200));
+create table student_profile (university varchar(50), website varchar(200), skills varchar(200), bio varchar(500), git varchar(200), email varchar(50));
+create table employer_profile(company varchar(50), website varchar(200), bio varchar(200),skills_looking varchar(200), email varchar(200));
