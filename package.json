@@ -1,23 +1,29 @@
 {
-  "name": "bride_the_gap",
+  "name": "social",
   "version": "1.0.0",
-  "description": "Bridge the Gap Platform ",
+  "description": "Practice",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "server.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ManidharVutla/Bride_The_Gap.git"
-  },
-  "keywords": [
-    "ENPM",
-    "613"
-  ],
-  "author": "Team Turing",
+  "author": "manidhar_tejasri",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/ManidharVutla/Bride_The_Gap/issues"
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "config": "^3.2.4",
+    "express": "^4.17.1",
+    "express-validator": "^6.2.0",
+    "gravatar": "^1.8.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.7.10",
+    "mysql": "^2.17.1",
+    "request": "^2.88.0"
   },
-  "homepage": "https://github.com/ManidharVutla/Bride_The_Gap#readme"
+  "devDependencies": {
+    "concurrently": "^5.0.0",
+    "nodemon": "^1.19.4"
+  }
 }
